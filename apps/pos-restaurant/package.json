@@ -4,26 +4,27 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3002",
+    "dev": "vite --port 3000",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 3002",
+    "preview": "vite preview --port 3000",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist",
     "test": "echo 'No tests configured for pos-restaurant'"
   },
   "dependencies": {
-    "@monorepo/shared-ui": "file:../../packages/shared-ui",
-    "@monorepo/shared-utils": "file:../../packages/shared-utils",
+    "@monorepo/shared-auth": "file:../../packages/shared-auth",
     "@monorepo/shared-pos": "file:../../packages/shared-pos",
     "@monorepo/shared-pwa": "file:../../packages/shared-pwa",
-    "@monorepo/shared-auth": "file:../../packages/shared-auth",
+    "@monorepo/shared-ui": "file:../../packages/shared-ui",
+    "@monorepo/shared-utils": "file:../../packages/shared-utils",
     "@types/keycloak-js": "^2.5.4",
-    "keycloak-js": "^26.2.1",
+    "@types/react-router-dom": "^5.3.3",
+    "idb": "^8.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "workbox-window": "^7.0.0",
-    "idb": "^8.0.0"
+    "react-router-dom": "^7.9.4",
+    "workbox-window": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

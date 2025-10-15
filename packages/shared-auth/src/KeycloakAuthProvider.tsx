@@ -15,8 +15,24 @@ const useKeycloakAuth = (): AuthContextType => {
     isAuthenticated: kc?.authenticated || false,
     isLoading: !initialized,
     user: kc?.tokenParsed || null,
-    login: () => kc?.login(),
-    logout: () => kc?.logout(),
+    login: (redirectUri?: string) => {
+      if (!kc?.authenticated) {
+        const redirectUrl =
+          redirectUri ||
+          (typeof window !== "undefined" &&
+            (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+          window.location.origin;
+        kc?.login({ redirectUri: redirectUrl });
+      }
+    },
+    logout: (redirectUri?: string) => {
+      const redirectUrl =
+        redirectUri ||
+        (typeof window !== "undefined" &&
+          (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+        window.location.origin;
+      kc?.logout({ redirectUri: redirectUrl });
+    },
     token: kc?.token || null,
   };
 };

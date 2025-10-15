@@ -45,14 +45,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initKeycloak();
   }, []);
 
-  const login = () => {
-    // This will be handled by the KeycloakAuthProvider
-    console.log("Login should be handled by KeycloakAuthProvider");
+  const login = (redirectUri?: string) => {
+    const keycloak = createKeycloakInstance();
+    const redirectUrl =
+      redirectUri ||
+      (typeof window !== "undefined" &&
+        (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+      window.location.origin;
+    keycloak.login({ redirectUri: redirectUrl });
   };
 
-  const logout = () => {
-    // This will be handled by the KeycloakAuthProvider
-    console.log("Logout should be handled by KeycloakAuthProvider");
+  const logout = (redirectUri?: string) => {
+    const keycloak = createKeycloakInstance();
+    const redirectUrl =
+      redirectUri ||
+      (typeof window !== "undefined" &&
+        (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+      window.location.origin;
+    keycloak.logout({ redirectUri: redirectUrl });
   };
 
   const value: AuthContextType = {

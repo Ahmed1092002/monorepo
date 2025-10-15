@@ -41,8 +41,8 @@ export interface SSOContextType {
   setSubscriptionStatus: (status: string | null) => void;
   kc: Keycloak;
   loading: boolean;
-  login: () => void;
-  logout: () => void;
+  login: (redirectUri?: string) => void;
+  logout: (redirectUri?: string) => void;
   user: any;
   token: string | null;
 }
@@ -132,12 +132,10 @@ export function SSOProvider({ children }: { children: React.ReactNode }) {
   async function initKeyCloakLogin() {
     try {
       const authenticated = await kc.init({
-        onLoad: "login-required",
+        onLoad: "check-sso",
         pkceMethod: "S256",
+        // KeycloakResponseType: "code",
         checkLoginIframe: false,
-        flow: "standard",
-        responseMode: "fragment",
-        scope: "openid profile email",
       });
 
       setAuthenticated(authenticated);
@@ -146,7 +144,7 @@ export function SSOProvider({ children }: { children: React.ReactNode }) {
         clearLocalStorage();
         setLoading(false);
         // If not authenticated, redirect to login
-        kc.login();
+        // kc.login();
       } else {
         setLoading(false);
         setKeyCloackData(kc);
@@ -201,15 +199,34 @@ export function SSOProvider({ children }: { children: React.ReactNode }) {
   }, [kc]);
 
   // Login function
-  const login = useCallback(() => {
-    kc.login();
-  }, [kc]);
+  const login = useCallback(
+    (redirectUri?: string) => {
+      const redirectUrl =
+        redirectUri ||
+        (typeof window !== "undefined" &&
+          (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+        window.location.origin;
+      kc.login({ redirectUri: redirectUrl });
+    },
+    [kc]
+  );
 
   // Logout function
-  const logout = useCallback(() => {
-    clearLocalStorage();
-    kc.logout();
-  }, [kc]);
+  const logout = useCallback(
+    (redirectUri?: string) => {
+      console.log("🚪 Logout called with redirectUri:", redirectUri);
+      clearLocalStorage();
+      const redirectUrl =
+        redirectUri ||
+        (typeof window !== "undefined" &&
+          (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
+        window.location.origin;
+      console.log("🚪 Final redirect URL:", redirectUrl);
+      console.log("🚪 Calling kc.logout with:", { redirectUri: redirectUrl });
+      kc.logout({ redirectUri: redirectUrl });
+    },
+    [kc]
+  );
 
   // Initialize on mount
   useEffect(() => {

@@ -72,13 +72,10 @@ export const safeKeycloakInit = async (initOptions: KeycloakInitOptions) => {
 
 // Enhanced Keycloak configuration for PWA
 export const keycloakInitOptions: KeycloakInitOptions = {
-  onLoad: "login-required",
+  onLoad: "check-sso",
   pkceMethod: "S256",
+  // KeycloakResponseType: "code",
   checkLoginIframe: false,
-  flow: "standard",
-  responseMode: "fragment",
-  scope: "openid profile email",
-  silentCheckSsoRedirectUri: window.location.origin + "/silent-check-sso.html",
 };
 
 // Export types
@@ -86,8 +83,8 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: any;
-  login: () => void;
-  logout: () => void;
+  login: (redirectUri?: string) => void;
+  logout: (redirectUri?: string) => void;
   token: string | null;
 }
 
