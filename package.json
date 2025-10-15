@@ -1,0 +1,39 @@
+{
+  "name": "monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo with Vite React app and Keycloak authentication",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=react-app",
+    "dev:retail": "npm run dev --workspace=pos-retail",
+    "dev:restaurant": "npm run dev --workspace=pos-restaurant",
+    "build": "npm run build --workspaces",
+    "build:retail": "npm run build --workspace=pos-retail",
+    "build:restaurant": "npm run build --workspace=pos-restaurant",
+    "preview": "npm run preview --workspace=react-app",
+    "preview:retail": "npm run preview --workspace=pos-retail",
+    "preview:restaurant": "npm run preview --workspace=pos-restaurant",
+    "lint": "npm run lint --workspaces",
+    "type-check": "npm run type-check --workspaces",
+    "clean": "npm run clean --workspaces",
+    "install-all": "npm install"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^20.10.0",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@react-keycloak/web": "^3.4.0"
+  }
+}
