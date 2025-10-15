@@ -8,27 +8,35 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=react-app",
-    "dev:retail": "npm run dev --workspace=pos-retail",
-    "dev:restaurant": "npm run dev --workspace=pos-restaurant",
-    "build": "npm run build --workspaces",
-    "build:retail": "npm run build --workspace=pos-retail",
-    "build:restaurant": "npm run build --workspace=pos-restaurant",
-    "preview": "npm run preview --workspace=react-app",
-    "preview:retail": "npm run preview --workspace=pos-retail",
-    "preview:restaurant": "npm run preview --workspace=pos-restaurant",
-    "lint": "npm run lint --workspaces",
-    "type-check": "npm run type-check --workspaces",
-    "clean": "npm run clean --workspaces",
-    "install-all": "npm install"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:retail": "turbo run dev --filter=pos-retail",
+    "dev:restaurant": "turbo run dev --filter=pos-restaurant",
+    "dev:main": "turbo run dev --filter=react-app",
+    "build:retail": "turbo run build --filter=pos-retail",
+    "build:restaurant": "turbo run build --filter=pos-restaurant",
+    "build:main": "turbo run build --filter=react-app",
+    "preview": "turbo run preview",
+    "preview:retail": "turbo run preview --filter=pos-retail",
+    "preview:restaurant": "turbo run preview --filter=pos-restaurant",
+    "preview:main": "turbo run preview --filter=react-app",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "install-all": "npm install",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^20.10.0",
     "eslint": "^8.55.0",
     "prettier": "^3.1.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "turbo": "^2.5.8"
   },
+  "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"

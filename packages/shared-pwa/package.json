@@ -1,0 +1,20 @@
+{
+  "name": "@monorepo/shared-pwa",
+  "version": "1.0.0",
+  "description": "Shared PWA utilities and service worker management",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "workbox-window": "^7.0.0",
+    "idb": "^8.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
