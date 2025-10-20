@@ -3,11 +3,15 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { KeycloakAuthProvider } from "@monorepo/shared-auth";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <KeycloakAuthProvider>
-      <App />
-    </KeycloakAuthProvider>
+    <Provider store={store}>
+      <KeycloakAuthProvider>
+        <App />
+      </KeycloakAuthProvider>
+    </Provider>
   </StrictMode>
 );

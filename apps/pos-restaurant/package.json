@@ -18,7 +18,6 @@
     "@monorepo/shared-pwa": "file:../../packages/shared-pwa",
     "@monorepo/shared-ui": "file:../../packages/shared-ui",
     "@monorepo/shared-utils": "file:../../packages/shared-utils",
-    "@types/keycloak-js": "^2.5.4",
     "@types/react-router-dom": "^5.3.3",
     "idb": "^8.0.0",
     "react": "^19.1.1",

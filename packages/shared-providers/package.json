@@ -1,0 +1,27 @@
+{
+  "name": "@monorepo/shared-providers",
+  "version": "1.0.0",
+  "description": "Shared React providers and contexts (i18n, localization)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "i18next": "^23.15.2",
+    "react-i18next": "^15.5.2"
+  },
+  "peerDependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "@monorepo/shared-api": "*",
+    "@monorepo/shared-utils": "*",
+    "@monorepo/shared-types": "*"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
