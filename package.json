@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=12",
     "dev:retail": "turbo run dev --filter=pos-retail",
     "dev:restaurant": "turbo run dev --filter=pos-restaurant",
     "dev:main": "turbo run dev --filter=react-app",

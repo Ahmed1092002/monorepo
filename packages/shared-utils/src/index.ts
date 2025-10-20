@@ -19,3 +19,5 @@ export * from "./utils/offline";
 export * from "./utils/pwa";
 export * from "./env";
 export * from "./utils/apiClient";
+
+export { default as SubscriptionEnums } from "./utils/subscriptionEnums";
