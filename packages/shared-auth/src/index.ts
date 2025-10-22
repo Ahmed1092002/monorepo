@@ -1,18 +1,13 @@
 // Export all authentication-related components and utilities
-export { AuthProvider, useAuth as useLegacyAuth } from "./AuthContext";
-export { MockAuthProvider, useMockAuth } from "./MockAuth";
 export { KeycloakAuthProvider, useAuth } from "./KeycloakAuthProvider";
-export { SSOProvider, useSSO } from "./SSOProvider";
 export {
-  LoginButton,
-  LogoutButton,
-  UserProfile,
-  LoadingSpinner,
-} from "./AuthComponents";
-export {
+  pwaAuthUtils,
+  default as keycloak,
   createKeycloakInstance,
-  keycloakInitOptions,
-  keycloak,
+  getKeycloakInstance,
+  resetKeycloakInstance,
+  initializeKeycloak,
+  setKeycloakConfig,
 } from "./keycloak";
-export type { AuthContextType, AuthProviderProps } from "./keycloak";
-export type { SSOContextType, IUserData } from "./SSOProvider";
+export type { KeycloakConfig } from "./keycloak";
+export { useKeycloak } from "@react-keycloak/web";

@@ -1,10 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  createKeycloakInstance,
-  keycloakInitOptions,
-  AuthContextType,
-  AuthProviderProps,
-} from "./keycloak";
+import keycloak from "./keycloak";
+
+// Define interfaces locally
+interface AuthContextType {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  user: any;
+  login: (redirectUri?: string) => void;
+  logout: (redirectUri?: string) => void;
+  token: string | null;
+}
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -25,10 +34,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initKeycloak = async () => {
       try {
-        // Create a new Keycloak instance for this provider
-        const keycloak = createKeycloakInstance();
-
-        const authenticated = await keycloak.init(keycloakInitOptions);
+        const authenticated = await keycloak.init({
+          onLoad: "check-sso",
+          pkceMethod: "S256",
+          checkLoginIframe: false,
+          flow: "standard",
+          responseMode: "fragment",
+          scope: "openid profile email",
+        });
 
         if (authenticated) {
           setIsAuthenticated(true);
@@ -46,7 +59,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = (redirectUri?: string) => {
-    const keycloak = createKeycloakInstance();
     const redirectUrl =
       redirectUri ||
       (typeof window !== "undefined" &&
@@ -56,7 +68,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = (redirectUri?: string) => {
-    const keycloak = createKeycloakInstance();
     const redirectUrl =
       redirectUri ||
       (typeof window !== "undefined" &&

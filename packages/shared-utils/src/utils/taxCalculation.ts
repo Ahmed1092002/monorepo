@@ -10,6 +10,8 @@ export interface ITaxesGrid {
   typeCode?: string;
   subTypeCode?: string;
   enDescription?: string;
+  taxTypeId: number;
+  taxSubtypeId: number;
 }
 
 export interface ITaxesTotalList {
@@ -224,6 +226,8 @@ export function convertLineTaxesToTaxesGrid(
       typeCode: t.typeCode,
       subTypeCode: t.subTypeCode,
       enDescription: t.enDescription,
+      taxTypeId: t.lookupTaxableTypeId,
+      taxSubtypeId: t.lookupTaxableSubTypeId,
     };
   });
 }

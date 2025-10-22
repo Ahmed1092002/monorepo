@@ -1,38 +1,44 @@
+import { RouterProvider } from "react-router";
+import { ToastContainer } from "react-toastify";
+import { router } from "./routes";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { OfflineIndicator } from "@monorepo/shared-pos";
-import { pwaManager } from "@monorepo/shared-pwa";
-import { LoginPage } from "./components/LoginPage";
-import { Dashboard } from "./components/Dashboard";
-import { POSPage } from "./components/POSPage";
-import { SettingsPage } from "./components/SettingsPage";
-import "./App.css";
+import { pwaManager } from "@monorepo/shared-utils";
+import { useLocalization } from "@monorepo/shared-providers";
+// import {
+//   OfflineIndicator,
+//   OnlineIndicator,
+// } from "./components/ui/OfflineIndicator";
+// import PWAUpdateNotification from "./components/ui/PWAUpdateNotification";
 
 function App() {
+  const { language } = useLocalization();
+  const isRTL = language?.isRTL || false;
+
   useEffect(() => {
-    // Initialize PWA
-    pwaManager.initialize();
+    // Register PWA service worker
+    pwaManager.register();
   }, []);
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <OfflineIndicator />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/pos/:locationId" element={<POSPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </div>
-    </Router>
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={isRTL}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* <OfflineIndicator /> */}
+      {/* <OnlineIndicator /> */}
+      {/* <PWAUpdateNotification /> */}
+    </>
   );
 }
 

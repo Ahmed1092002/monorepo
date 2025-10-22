@@ -1,6 +1,4 @@
-// Centralized subscription status enum used by apps
-// Numeric values chosen to be stable across clients
-const SubscriptionEnums = {
+export const SubscriptionEnums = {
   Draft: 0,
   UpToDate: 1,
   Pending: 2,

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import SubscriptionEnums from "@monorepo/shared-utils";
+import { SubscriptionEnums } from "@monorepo/shared-utils";
 import type { POS, Shift } from "@monorepo/shared-types";
 
 interface SubscriptionState {
