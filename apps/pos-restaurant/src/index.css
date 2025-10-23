@@ -1,0 +1,289 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Global base font size: scale rem-based typography to medium */
+    font-size: 15px; /* default ~16px -> slightly reduced to medium */
+    /* Restaurant Brand colors - Warm, appetizing palette */
+    --brand-primary: #d97706; /* Warm orange - appetizing */
+    --brand-primary-contrast: #ffffff;
+    --brand-dark: #1f2937; /* Dark gray */
+    --brand-surface: #ffffff;
+    --brand-muted: #fef3c7; /* Warm cream */
+    --brand-accent: #fef7cd; /* Light cream */
+    /* Restaurant-specific colors */
+    --brand-success: #059669; /* Fresh green */
+    --brand-warning: #d97706; /* Warm orange */
+    --brand-error: #dc2626; /* Red for urgent */
+    --brand-info: #0ea5e9; /* Blue */
+    /* Food-specific colors */
+    --brand-food-primary: #ea580c; /* Food orange */
+    --brand-food-secondary: #f59e0b; /* Golden yellow */
+    --brand-food-accent: #fbbf24; /* Light gold */
+    /* Shadows and borders */
+    --brand-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --brand-shadow-lg:
+      0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --brand-border: #e5e7eb;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    @apply m-0 p-0 font-sans antialiased bg-[var(--brand-surface)] text-[var(--brand-dark)];
+  }
+
+  /* Make all buttons show pointer cursor */
+  button {
+    cursor: pointer;
+  }
+
+  /* RTL Support */
+  .rtl {
+    direction: rtl;
+  }
+
+  .ltr {
+    direction: ltr;
+  }
+
+  /* RTL specific styles */
+  .rtl .text-left {
+    text-align: right;
+  }
+
+  .rtl .text-right {
+    text-align: left;
+  }
+
+  .rtl .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl .justify-start {
+    justify-content: flex-end;
+  }
+
+  .rtl .justify-end {
+    justify-content: flex-start;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--brand-muted);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--brand-primary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d55a47;
+  }
+}
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)] px-4 py-2 rounded-lg font-medium hover:bg-[#d55a47]  transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-[var(--brand-primary)] border border-[var(--brand-primary)] px-4 py-2 rounded-lg font-medium hover:bg-[var(--brand-primary)] hover:text-white transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply text-[var(--brand-dark)] hover:bg-[var(--brand-muted)] px-4 py-2 rounded-lg font-medium  transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-[var(--brand-border)] rounded-lg bg-[var(--brand-muted)]
+      focus:border-[var(--brand-primary)] focus:bg-white focus:outline-none
+      focus:ring-2 focus:ring-[var(--brand-primary)]
+      focus:ring-offset-2 focus:ring-offset-[var(--brand-surface)]
+      transition-colors;
+  }
+
+  /* Hide number input arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-[var(--brand-shadow)] border border-[var(--brand-border)];
+  }
+}
+@layer utilities {
+  .border-brand-border {
+    @apply border-[var(--brand-border)];
+  }
+  .text-brand-dark {
+    @apply text-[var(--brand-dark)];
+  }
+  .text-brand-primary {
+    @apply text-[var(--brand-primary)];
+  }
+  .bg-brand-surface {
+    @apply bg-[var(--brand-surface)];
+  }
+  .bg-brand-muted {
+    @apply bg-[var(--brand-muted)];
+  }
+  .bg-brand-success {
+    @apply bg-[var(--brand-success)];
+  }
+  .bg-brand-danger {
+    @apply bg-[var(--brand-error)];
+  }
+  .modal-overlay {
+    @apply bg-black/40 backdrop-blur-sm;
+  }
+
+  .shadow-brand-md {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .shadow-brand-lg {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .shadow-brand-xl {
+    box-shadow:
+      0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 ease-out hover:-translate-y-0.5;
+  }
+
+  .hover-lift:hover {
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out hover:scale-105;
+  }
+
+  .animate-spinCircle1 {
+    animation: spinCircle1 2s normal infinite;
+  }
+  .animate-spinCircle2 {
+    animation: spinCircle2 4s forwards infinite;
+  }
+  .animate-spinCircle3 {
+    animation: spinCircle3 3s reverse infinite;
+  }
+
+  /* Restaurant-specific utilities */
+  .btn-food-primary {
+    @apply bg-[var(--brand-food-primary)] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#c2410c] transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-food-secondary {
+    @apply bg-[var(--brand-food-secondary)] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#d97706] transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .card-food {
+    @apply bg-gradient-to-br from-white to-[var(--brand-muted)] rounded-lg shadow-[var(--brand-shadow)] border border-[var(--brand-border)] hover:shadow-[var(--brand-shadow-lg)] transition-shadow;
+  }
+
+  .text-food-primary {
+    @apply text-[var(--brand-food-primary)];
+  }
+
+  .text-food-secondary {
+    @apply text-[var(--brand-food-secondary)];
+  }
+
+  .bg-food-primary {
+    @apply bg-[var(--brand-food-primary)];
+  }
+
+  .bg-food-secondary {
+    @apply bg-[var(--brand-food-secondary)];
+  }
+
+  .bg-food-accent {
+    @apply bg-[var(--brand-food-accent)];
+  }
+
+  /* Food category indicators */
+  .category-appetizer {
+    @apply border-l-4 border-l-green-500 bg-green-50;
+  }
+
+  .category-main-course {
+    @apply border-l-4 border-l-orange-500 bg-orange-50;
+  }
+
+  .category-dessert {
+    @apply border-l-4 border-l-pink-500 bg-pink-50;
+  }
+
+  .category-beverage {
+    @apply border-l-4 border-l-blue-500 bg-blue-50;
+  }
+
+  /* Order status indicators */
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-300;
+  }
+
+  .status-preparing {
+    @apply bg-orange-100 text-orange-800 border border-orange-300;
+  }
+
+  .status-ready {
+    @apply bg-green-100 text-green-800 border border-green-300;
+  }
+
+  .status-served {
+    @apply bg-blue-100 text-blue-800 border border-blue-300;
+  }
+}
+
+@keyframes spinCircle1 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinCircle2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinCircle3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
