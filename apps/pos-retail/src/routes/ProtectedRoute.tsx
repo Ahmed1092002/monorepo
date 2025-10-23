@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
-import { useKeycloak } from "@monorepo/shared-auth";
+import { useAuth, useKeycloak, pwaAuthUtils } from "@monorepo/shared-auth";
 import type Keycloak from "keycloak-js";
 import { useEffect, useState } from "react";
 import * as db from "@monorepo/shared-utils";
@@ -21,7 +21,6 @@ import {
 import { SubscriptionEnums } from "@monorepo/shared-utils";
 import { LoadingSpinner } from "@monorepo/shared-ui";
 import { useOfflineStatus } from "@monorepo/shared-utils";
-import { pwaAuthUtils } from "@monorepo/shared-auth";
 import type { Shift, POS } from "@monorepo/shared-types";
 import { useGetShiftPOSQuery } from "@monorepo/shared-api";
 // import UnauthorizedAccessModal from "@monorepo/shared-ui";
@@ -29,6 +28,7 @@ import { useTranslation } from "react-i18next";
 
 const ProtectedRoute = () => {
   const { keycloak, initialized } = useKeycloak();
+  const { isAuthenticated, user, token, login, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -52,35 +52,31 @@ const ProtectedRoute = () => {
     clearData: false,
   });
 
-  const memberId = keycloak?.tokenParsed?.member_id;
+  const memberId = user?.member_id;
 
   const { isLoading: tokenLoading } = useAddTokenToCacheQuery(
-    keycloak?.authenticated ? keycloak?.token : undefined,
+    isAuthenticated ? token : undefined,
     {
-      skip: !keycloak?.authenticated || isOffline,
+      skip: !isAuthenticated || isOffline,
       refetchOnMountOrArgChange: true,
     }
   );
 
   const { data: memberData, isLoading: memberLoading } =
-    useGetMemberStatusQuery(keycloak?.authenticated ? memberId : undefined, {
-      skip: !keycloak?.authenticated || !memberId || isOffline,
+    useGetMemberStatusQuery(isAuthenticated ? memberId : undefined, {
+      skip: !isAuthenticated || !memberId || isOffline,
       refetchOnMountOrArgChange: true,
     });
   const { data: shiftDataFromAPI } = useGetShiftPOSQuery(
     Number(currentShift?.id),
     {
-      skip:
-        !keycloak?.authenticated ||
-        !currentShift?.id ||
-        isOffline ||
-        tokenLoading,
+      skip: !isAuthenticated || !currentShift?.id || isOffline || tokenLoading,
     }
   );
 
   // Cache user modules
   const { data: userModules } = useGetMemberMudulesQuery(undefined, {
-    skip: !keycloak?.authenticated || isOffline,
+    skip: !isAuthenticated || isOffline,
     refetchOnMountOrArgChange: 3600, // Cache for 1 hour
   });
 
@@ -175,12 +171,12 @@ const ProtectedRoute = () => {
 
   // Employee ID validation and shift status check
   useEffect(() => {
-    if (!isInitialDataLoaded || !keycloak?.authenticated || isOffline) return;
+    if (!isInitialDataLoaded || !isAuthenticated || isOffline) return;
 
     const validateEmployeeAndShift = async () => {
       try {
         const storedEmployeeId = await db.get<string>("employeeId");
-        const currentEmployeeId = keycloak?.tokenParsed?.employee_id;
+        const currentEmployeeId = user?.employee_id;
 
         // If no stored employee ID, store the current one (first time login)
         if (!storedEmployeeId && currentEmployeeId) {
@@ -242,8 +238,8 @@ const ProtectedRoute = () => {
     validateEmployeeAndShift();
   }, [
     isInitialDataLoaded,
-    keycloak?.authenticated,
-    keycloak?.tokenParsed?.employee_id,
+    isAuthenticated,
+    user?.employee_id,
     currentShift?.id,
     shiftDataFromAPI,
     isOffline,
@@ -326,10 +322,10 @@ const ProtectedRoute = () => {
   }, [userModules]);
 
   useEffect(() => {
-    if (keycloak?.authenticated && !isOffline) {
+    if (isAuthenticated && !isOffline) {
       pwaAuthUtils.cacheTokens();
     }
-  }, [keycloak?.authenticated, isOffline]);
+  }, [isAuthenticated, isOffline]);
 
   // Handle data refresh when coming back online
   useEffect(() => {
@@ -414,11 +410,7 @@ const ProtectedRoute = () => {
     }
 
     // Handle online mode
-    if (
-      keycloak.authenticated &&
-      initialized &&
-      status !== SubscriptionEnums.Draft
-    ) {
+    if (isAuthenticated && initialized && status !== SubscriptionEnums.Draft) {
       if (status !== SubscriptionEnums.UpToDate) {
         if (location.pathname !== "/subscription-status") {
           navigate("/subscription-status");
@@ -430,7 +422,7 @@ const ProtectedRoute = () => {
       }
     }
   }, [
-    keycloak.authenticated,
+    isAuthenticated,
     initialized,
     status,
     location.pathname,
@@ -451,8 +443,8 @@ const ProtectedRoute = () => {
     return <LoadingSpinner />;
   }
 
-  if (!keycloak.authenticated) {
-    keycloak.login({ redirectUri: import.meta.env.VITE_API_BASE_URL });
+  if (!isAuthenticated) {
+    login({ redirectUri: import.meta.env.VITE_API_BASE_URL });
     return null;
   }
 

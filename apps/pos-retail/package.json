@@ -14,10 +14,11 @@
   },
   "dependencies": {
     "@monorepo/shared-auth": "file:../../packages/shared-auth",
-    "@monorepo/shared-pos": "file:../../packages/shared-pos",
     "@monorepo/shared-pwa": "file:../../packages/shared-pwa",
     "@monorepo/shared-ui": "file:../../packages/shared-ui",
     "@monorepo/shared-utils": "file:../../packages/shared-utils",
+    "@monorepo/shared-api": "file:../../packages/shared-api",
+    "@monorepo/shared-types": "file:../../packages/shared-types",
     "@types/react-router-dom": "^5.3.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -28,7 +29,9 @@
     "i18next-http-backend": "^3.0.2",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
-    "zod": "^4.1.11"
+    "zod": "^4.1.11",
+    "react-toastify": "^11.0.5",
+    "lucide-react": "^0.544.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

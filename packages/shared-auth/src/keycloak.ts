@@ -1,13 +1,17 @@
 import Keycloak from "keycloak-js";
 import type { KeycloakInitOptions } from "keycloak-js";
-import { offlineManager } from "@monorepo/shared-utils";
-import * as db from "@monorepo/shared-utils";
 
 // Initialize Keycloak instance
 const keycloak = new Keycloak({
-  url: (window as any).import?.meta?.env?.VITE_KEYCLOAK_URL,
-  realm: (window as any).import?.meta?.env?.VITE_KEYCLOAK_REALM,
-  clientId: (window as any).import?.meta?.env?.VITE_KEYCLOAK_CLIENT_ID,
+  url:
+    (import.meta as any).env?.VITE_KEYCLOAK_URL ||
+    process.env.VITE_KEYCLOAK_URL,
+  realm:
+    (import.meta as any).env?.VITE_KEYCLOAK_REALM ||
+    process.env.VITE_KEYCLOAK_REALM,
+  clientId:
+    (import.meta as any).env?.VITE_KEYCLOAK_CLIENT_ID ||
+    process.env.VITE_KEYCLOAK_CLIENT_ID,
 });
 
 // Enhanced Keycloak configuration for PWA
@@ -18,6 +22,35 @@ const keycloakConfig: KeycloakInitOptions = {
   flow: "standard",
   responseMode: "fragment",
   scope: "openid profile email",
+};
+
+// Simple offline manager for PWA support
+const offlineManager = {
+  getStatus: () => ({
+    isOffline: !navigator.onLine,
+    isOnline: navigator.onLine,
+    isChecking: false,
+  }),
+  subscribe: (
+    callback: (status: {
+      isOffline: boolean;
+      isOnline: boolean;
+      isChecking: boolean;
+    }) => void
+  ) => {
+    const handleOnline = () =>
+      callback({ isOffline: false, isOnline: true, isChecking: false });
+    const handleOffline = () =>
+      callback({ isOffline: true, isOnline: false, isChecking: false });
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  },
 };
 
 // 🔥 CRITICAL: Override Keycloak's redirect methods to prevent redirects when offline
@@ -178,15 +211,15 @@ export const pwaAuthUtils = {
 
   async checkOfflineAuth(): Promise<boolean> {
     try {
-      const tokenMetadata = await db.get<{
-        authenticated?: boolean;
-        exp?: number;
-      }>("keycloak-token");
-
-      if (tokenMetadata?.authenticated) {
-        const now = Date.now() / 1000;
-        if (tokenMetadata.exp && tokenMetadata.exp > now) {
-          return true;
+      // Simple localStorage fallback for offline auth check
+      const tokenMetadata = localStorage.getItem("keycloak-token");
+      if (tokenMetadata) {
+        const parsed = JSON.parse(tokenMetadata);
+        if (parsed.authenticated) {
+          const now = Date.now() / 1000;
+          if (parsed.exp && parsed.exp > now) {
+            return true;
+          }
         }
       }
       return false;
@@ -204,7 +237,7 @@ export const pwaAuthUtils = {
           iat: keycloak.tokenParsed.iat,
           sub: keycloak.tokenParsed.sub,
         };
-        await db.set("keycloak-token", tokenMetadata);
+        localStorage.setItem("keycloak-token", JSON.stringify(tokenMetadata));
       }
     } catch (error) {
       console.error("Failed to cache authentication metadata:", error);

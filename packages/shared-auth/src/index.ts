@@ -1,15 +1,34 @@
-// Export all authentication-related components and utilities
-// export { AuthProvider, useAuth as useLegacyAuth } from "./AuthContext";
-// export { MockAuthProvider, useMockAuth } from "./MockAuth";
-export { KeycloakAuthProvider, useAuth } from "./KeycloakAuthProvider";
-// export { SSOProvider, useSSO } from "./SSOProvider";
-// export {
-//   LoginButton,
-//   LogoutButton,
-//   UserProfile,
-//   LoadingSpinner,
-// } from "./AuthComponents";
-export { pwaAuthUtils, default as keycloak } from "./keycloak";
+// Main Keycloak instance and utilities
+export { default as keycloak, pwaAuthUtils } from "./keycloak";
+
+// React Keycloak Provider
+export { default as KeycloakAuthProvider } from "./KeycloakAuthProvider";
+export type { KeycloakAuthProviderProps } from "./KeycloakAuthProvider";
+
+// Authentication Context and Hook
+export { default as AuthContext, AuthProvider, useAuth } from "./AuthContext";
+export type { AuthContextType, AuthProviderProps } from "./AuthContext";
+
+// Authentication Components
+export {
+  LoginButton,
+  LogoutButton,
+  RegisterButton,
+  AccountManagementButton,
+  ProtectedRoute,
+  AuthStatus,
+  UserInfo,
+} from "./AuthComponents";
+
+export type {
+  LoginButtonProps,
+  LogoutButtonProps,
+  RegisterButtonProps,
+  AccountManagementButtonProps,
+  ProtectedRouteProps,
+  AuthStatusProps,
+  UserInfoProps,
+} from "./AuthComponents";
+
+// Re-export React Keycloak hooks for convenience
 export { useKeycloak } from "@react-keycloak/web";
-// export type { AuthContextType, AuthProviderProps } from "./keycloak";
-// export type { SSOContextType, IUserData } from "./SSOProvider";

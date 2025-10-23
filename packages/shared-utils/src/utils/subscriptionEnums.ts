@@ -1,10 +1,10 @@
 export const SubscriptionEnums = {
-  Draft: 0,
-  UpToDate: 1,
-  Pending: 2,
-  Excluded: 3,
-  Terminated: 4,
-  Expired: 5,
+  Excluded: -2,
+  Draft: -1,
+  Terminated: 0,
+  Pending: 1,
+  UpToDate: 2,
+  Expired: 3,
 } as const;
 
 export type SubscriptionStatus =

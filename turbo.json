@@ -1,15 +1,45 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", ".env", "**/.env"],
   "concurrency": "12",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "VITE_KEYCLOAK_URL",
+        "VITE_KEYCLOAK_REALM",
+        "VITE_KEYCLOAK_CLIENT_ID",
+        "VITE_API_BASE_URL",
+        "VITE_POS_API_URL",
+        "VITE_PRODUCT_API_URL",
+        "VITE_CRM_API_URL",
+        "VITE_COMPANY_API_URL",
+        "VITE_CONFIGURATION_API_URL",
+        "VITE_CUSTOMER_API_URL",
+        "VITE_INVENTORY_API_URL",
+        "VITE_CONTENT_API_URL",
+        "NODE_ENV"
+      ]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "VITE_KEYCLOAK_URL",
+        "VITE_KEYCLOAK_REALM",
+        "VITE_KEYCLOAK_CLIENT_ID",
+        "VITE_API_BASE_URL",
+        "VITE_POS_API_URL",
+        "VITE_PRODUCT_API_URL",
+        "VITE_CRM_API_URL",
+        "VITE_COMPANY_API_URL",
+        "VITE_CONFIGURATION_API_URL",
+        "VITE_CUSTOMER_API_URL",
+        "VITE_INVENTORY_API_URL",
+        "VITE_CONTENT_API_URL",
+        "NODE_ENV"
+      ]
     },
     "lint": {
       "dependsOn": ["^build"]
@@ -23,7 +53,18 @@
     "preview": {
       "dependsOn": ["build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "VITE_KEYCLOAK_URL",
+        "VITE_KEYCLOAK_REALM",
+        "VITE_KEYCLOAK_CLIENT_ID",
+        "VITE_API_BASE_URL",
+        "NODE_ENV"
+      ]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "env": ["NODE_ENV", "VITE_API_BASE_URL"]
     }
   }
 }

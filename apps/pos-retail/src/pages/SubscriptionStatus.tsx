@@ -1,14 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store/store";
 import { SubscriptionEnums } from "@monorepo/shared-utils";
-import { useKeycloak } from "@react-keycloak/web";
+import { useAuth } from "@monorepo/shared-auth";
 import { clearSubscription } from "../store/features/subscriptionSlice";
 import { AlertTriangle, LogOut } from "lucide-react";
 import * as db from "@monorepo/shared-utils";
 
 const SubscriptionStatus = () => {
   const dispatch = useDispatch();
-  const { keycloak } = useKeycloak();
+  const { logout } = useAuth();
   const { status } = useSelector((state: RootState) => state.subscription);
 
   const getStatusMessage = () => {
@@ -79,9 +79,7 @@ const SubscriptionStatus = () => {
       db.del("currentShift"),
     ]);
     // Redirect to logout
-    keycloak.logout({
-      redirectUri: import.meta.env.VITE_API_BASE_URL,
-    });
+    logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
   };
 
   return (

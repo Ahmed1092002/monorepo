@@ -1,23 +1,49 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import keycloak from "./keycloak";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useKeycloak } from "@react-keycloak/web";
+import { pwaAuthUtils } from "./keycloak";
 
-// Define interfaces locally
-interface AuthContextType {
+export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: any;
-  login: (redirectUri?: string) => void;
-  logout: (redirectUri?: string) => void;
-  token: string | null;
-}
-
-interface AuthProviderProps {
-  children: React.ReactNode;
+  token: string | undefined;
+  login: (options?: { redirectUri?: string }) => void;
+  logout: (options?: { redirectUri?: string }) => void;
+  register: (options?: { redirectUri?: string }) => void;
+  accountManagement: () => void;
+  checkAuthStatus: () => Promise<boolean>;
+  cacheTokens: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
+export interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { keycloak, initialized } = useKeycloak();
+
+  const authValue: AuthContextType = {
+    isAuthenticated: keycloak?.authenticated || false,
+    isLoading: !initialized,
+    user: keycloak?.tokenParsed || null,
+    token: keycloak?.token,
+    login: (options?: { redirectUri?: string }) => keycloak?.login(options),
+    logout: (options?: { redirectUri?: string }) => keycloak?.logout(options),
+    register: (options?: { redirectUri?: string }) =>
+      keycloak?.register(options),
+    accountManagement: () => keycloak?.accountManagement(),
+    checkAuthStatus: pwaAuthUtils.checkAuthStatus,
+    cacheTokens: pwaAuthUtils.cacheTokens,
+  };
+
+  return (
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
+  );
+};
+
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
@@ -25,65 +51,4 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const initKeycloak = async () => {
-      try {
-        const authenticated = await keycloak.init({
-          onLoad: "check-sso",
-          pkceMethod: "S256",
-          checkLoginIframe: false,
-          flow: "standard",
-          responseMode: "fragment",
-          scope: "openid profile email",
-        });
-
-        if (authenticated) {
-          setIsAuthenticated(true);
-          setUser(keycloak.tokenParsed);
-          setToken(keycloak.token || null);
-        }
-      } catch (error) {
-        console.error("Failed to initialize Keycloak:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initKeycloak();
-  }, []);
-
-  const login = (redirectUri?: string) => {
-    const redirectUrl =
-      redirectUri ||
-      (typeof window !== "undefined" &&
-        (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
-      window.location.origin;
-    keycloak.login({ redirectUri: redirectUrl });
-  };
-
-  const logout = (redirectUri?: string) => {
-    const redirectUrl =
-      redirectUri ||
-      (typeof window !== "undefined" &&
-        (window as any).import?.meta?.env?.VITE_API_BASE_URL) ||
-      window.location.origin;
-    keycloak.logout({ redirectUri: redirectUrl });
-  };
-
-  const value: AuthContextType = {
-    isAuthenticated,
-    isLoading,
-    user,
-    login,
-    logout,
-    token,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+export default AuthContext;

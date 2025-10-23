@@ -7,17 +7,19 @@ import App from "./App.tsx";
 import { I18nextProvider } from "react-i18next";
 import { i18n } from "@monorepo/shared-providers";
 import { LocalizationProvider } from "@monorepo/shared-providers";
-import { KeycloakAuthProvider } from "@monorepo/shared-auth";
+import { KeycloakAuthProvider, AuthProvider } from "@monorepo/shared-auth";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <KeycloakAuthProvider>
-        <I18nextProvider i18n={i18n}>
-          <LocalizationProvider>
-            <App />
-          </LocalizationProvider>
-        </I18nextProvider>
+        <AuthProvider>
+          <I18nextProvider i18n={i18n}>
+            <LocalizationProvider>
+              <App />
+            </LocalizationProvider>
+          </I18nextProvider>
+        </AuthProvider>
       </KeycloakAuthProvider>
     </Provider>
   </StrictMode>

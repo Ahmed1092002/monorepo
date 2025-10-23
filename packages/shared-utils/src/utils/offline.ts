@@ -17,9 +17,9 @@ class OfflineManager {
   private listeners: Set<(status: OfflineStatus) => void> = new Set();
   private connectivityCheckInterval: number | null = null;
   private readonly CHECK_INTERVAL = 3000;
-  private readonly WEBSOCKET_URL = (typeof window !== "undefined"
-    ? (window as any).import?.meta?.env?.VITE_WEBSOCKET_URL_TEST
-    : undefined) as string;
+  private readonly WEBSOCKET_URL =
+    (import.meta as any).env?.VITE_WEBSOCKET_URL_TEST ||
+    process.env.VITE_WEBSOCKET_URL_TEST;
 
   constructor() {
     const lastKnownState = sessionStorage.getItem("offline-manager-last-state");

@@ -1,6 +1,5 @@
 import { fetchBaseQuery, type BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import { keycloak } from "@monorepo/shared-auth";
-import { readClientEnv } from "@monorepo/shared-utils";
 
 export type Service =
   | "keyclock"
@@ -14,15 +13,15 @@ export type Service =
   | "content";
 
 const BASE_URLS: Record<Service, string> = {
-  keyclock: readClientEnv("VITE_KEYCLOAK_URL_API", ""),
-  crm: readClientEnv("VITE_CRM_API_URL", ""),
-  company: readClientEnv("VITE_COMPANY_API_URL", ""),
-  pos: readClientEnv("VITE_POS_API_URL", ""),
-  product: readClientEnv("VITE_PRODUCT_API_URL", ""),
-  configuration: readClientEnv("VITE_CONFIGURATION_API_URL", ""),
-  customer: readClientEnv("VITE_CUSTOMER_API_URL", ""),
-  inventory: readClientEnv("VITE_INVENTORY_API_URL", ""),
-  content: readClientEnv("VITE_CONTENT_API_URL", ""),
+  keyclock: (import.meta as any).env?.VITE_KEYCLOAK_URL_API || "",
+  crm: (import.meta as any).env?.VITE_CRM_API_URL || "",
+  company: (import.meta as any).env?.VITE_COMPANY_API_URL || "",
+  pos: (import.meta as any).env?.VITE_POS_API_URL || "",
+  product: (import.meta as any).env?.VITE_PRODUCT_API_URL || "",
+  configuration: (import.meta as any).env?.VITE_CONFIGURATION_API_URL || "",
+  customer: (import.meta as any).env?.VITE_CUSTOMER_API_URL || "",
+  inventory: (import.meta as any).env?.VITE_INVENTORY_API_URL || "",
+  content: (import.meta as any).env?.VITE_CONTENT_API_URL || "",
 };
 
 export const baseQuery = (

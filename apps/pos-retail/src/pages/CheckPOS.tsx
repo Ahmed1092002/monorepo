@@ -17,13 +17,14 @@ import {
 import type { CompanyLocation, POS } from "@monorepo/shared-types";
 import { useOfflineStatus } from "@monorepo/shared-utils";
 import * as db from "@monorepo/shared-utils";
-import { keycloak } from "@monorepo/shared-auth";
+import { useAuth } from "@monorepo/shared-auth";
 import { toast } from "react-toastify";
 import { Button, Input, Select, Text } from "@monorepo/shared-ui";
 
 const CheckPOS = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { logout, user, isAuthenticated } = useAuth();
   const { selectedBranch, selectedPOS } = useSelector(
     (state: RootState) => state.subscription
   );
@@ -210,16 +211,12 @@ const CheckPOS = () => {
       // Clear only session-specific data, keep cached data
       await db.clear().then(() => {
         dispatch(clearSubscription());
-        keycloak.logout({
-          redirectUri: import.meta.env.VITE_API_BASE_URL,
-        });
+        logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
       });
     } catch (error) {
       console.error("Error during logout:", error);
       // Still proceed with logout even if clearing fails
-      keycloak.logout({
-        redirectUri: import.meta.env.VITE_API_BASE_URL,
-      });
+      logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
     }
   };
 
@@ -273,8 +270,7 @@ const CheckPOS = () => {
                 </div>
                 <div>
                   <Text variant="small" color="light" className="opacity-95">
-                    Welcome{" "}
-                    {keycloak.authenticated ? keycloak.tokenParsed?.name : ""}
+                    Welcome {isAuthenticated ? user?.name : ""}
                   </Text>
                   <Text variant="h3" color="light" weight="semibold">
                     Start your POS session
