@@ -79,7 +79,7 @@ const SubscriptionStatus = () => {
       db.del("currentShift"),
     ]);
     // Redirect to logout
-    logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
+    logout({ redirectUri: import.meta.env.VITE_API_BASE_URL_RETAIL });
   };
 
   return (

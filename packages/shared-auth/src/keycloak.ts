@@ -1,5 +1,7 @@
 import Keycloak from "keycloak-js";
 import type { KeycloakInitOptions } from "keycloak-js";
+import { offlineManager, useOfflineStatus } from "@monorepo/shared-utils";
+import * as db from "@monorepo/shared-utils";
 
 // Initialize Keycloak instance
 const keycloak = new Keycloak({
@@ -24,34 +26,7 @@ const keycloakConfig: KeycloakInitOptions = {
   scope: "openid profile email",
 };
 
-// Simple offline manager for PWA support
-const offlineManager = {
-  getStatus: () => ({
-    isOffline: !navigator.onLine,
-    isOnline: navigator.onLine,
-    isChecking: false,
-  }),
-  subscribe: (
-    callback: (status: {
-      isOffline: boolean;
-      isOnline: boolean;
-      isChecking: boolean;
-    }) => void
-  ) => {
-    const handleOnline = () =>
-      callback({ isOffline: false, isOnline: true, isChecking: false });
-    const handleOffline = () =>
-      callback({ isOffline: true, isOnline: false, isChecking: false });
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  },
-};
+// Use the advanced offline manager from shared-utils
 
 // 🔥 CRITICAL: Override Keycloak's redirect methods to prevent redirects when offline
 const originalLogin = keycloak.login.bind(keycloak);
@@ -60,7 +35,8 @@ const originalLogout = keycloak.logout?.bind(keycloak);
 const originalAccountManagement = keycloak.accountManagement?.bind(keycloak);
 
 const blockIfOffline = (methodName: string) => {
-  const isOffline = !navigator.onLine || offlineManager.getStatus().isOffline;
+  const status = offlineManager.getStatus();
+  const isOffline = status.isOffline || status.isChecking;
   if (isOffline) {
     console.error(`🔥 BLOCKED Keycloak ${methodName} redirect while offline`);
     return true;
@@ -119,13 +95,13 @@ if (originalAccountManagement) {
     }
 
     const offlineStatus = offlineManager.getStatus();
-    const isCurrentlyOffline = !navigator.onLine || offlineStatus.isOffline;
+    const isCurrentlyOffline = offlineStatus.isOffline;
 
     if (offlineStatus.isChecking) {
       return new Promise((resolve) => {
         setTimeout(() => {
           const recheckStatus = offlineManager.getStatus();
-          const recheckOffline = !navigator.onLine || recheckStatus.isOffline;
+          const recheckOffline = recheckStatus.isOffline;
 
           if (recheckOffline) {
             hasInitialized = true;
@@ -200,10 +176,11 @@ if (originalAccountManagement) {
   };
 })();
 
-// PWA-aware authentication utilities
+// PWA-aware authentication utilities with advanced offline detection and database storage
 export const pwaAuthUtils = {
   async checkAuthStatus(): Promise<boolean> {
-    if (offlineManager.getStatus().isOffline) {
+    const status = offlineManager.getStatus();
+    if (status.isOffline || status.isChecking) {
       return this.checkOfflineAuth();
     }
     return Boolean(keycloak.authenticated);
@@ -211,10 +188,15 @@ export const pwaAuthUtils = {
 
   async checkOfflineAuth(): Promise<boolean> {
     try {
-      // Simple localStorage fallback for offline auth check
-      const tokenMetadata = localStorage.getItem("keycloak-token");
-      if (tokenMetadata) {
-        const parsed = JSON.parse(tokenMetadata);
+      // Use IndexedDB for offline auth check
+      const tokenMetadata = await db.get("keycloak-token");
+      if (tokenMetadata && typeof tokenMetadata === "object") {
+        const parsed = tokenMetadata as {
+          authenticated: boolean;
+          exp: number;
+          iat: number;
+          sub: string;
+        };
         if (parsed.authenticated) {
           const now = Date.now() / 1000;
           if (parsed.exp && parsed.exp > now) {
@@ -223,7 +205,8 @@ export const pwaAuthUtils = {
         }
       }
       return false;
-    } catch {
+    } catch (error) {
+      console.error("Failed to check offline auth:", error);
       return false;
     }
   },
@@ -236,11 +219,58 @@ export const pwaAuthUtils = {
           exp: keycloak.tokenParsed.exp,
           iat: keycloak.tokenParsed.iat,
           sub: keycloak.tokenParsed.sub,
+          name: keycloak.tokenParsed.name,
+          email: keycloak.tokenParsed.email,
+          preferred_username: keycloak.tokenParsed.preferred_username,
+          cachedAt: Date.now(),
         };
+
+        // Store in IndexedDB for better offline support
+        await db.set("keycloak-token", tokenMetadata);
+
+        // Also store in localStorage as fallback
         localStorage.setItem("keycloak-token", JSON.stringify(tokenMetadata));
       }
     } catch (error) {
       console.error("Failed to cache authentication metadata:", error);
+    }
+  },
+
+  async clearCachedTokens(): Promise<void> {
+    try {
+      await db.del("keycloak-token");
+      localStorage.removeItem("keycloak-token");
+    } catch (error) {
+      console.error("Failed to clear cached tokens:", error);
+    }
+  },
+
+  async getCachedUserInfo(): Promise<any> {
+    try {
+      const tokenMetadata = await db.get("keycloak-token");
+      if (tokenMetadata && typeof tokenMetadata === "object") {
+        const parsed = tokenMetadata as {
+          authenticated: boolean;
+          exp: number;
+          name?: string;
+          email?: string;
+          preferred_username?: string;
+        };
+        if (parsed.authenticated) {
+          const now = Date.now() / 1000;
+          if (parsed.exp && parsed.exp > now) {
+            return {
+              name: parsed.name,
+              email: parsed.email,
+              preferred_username: parsed.preferred_username,
+            };
+          }
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to get cached user info:", error);
+      return null;
     }
   },
 };

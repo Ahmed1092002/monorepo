@@ -64,8 +64,6 @@ export const Input: React.FC<InputProps> = ({
     theme.focus,
     disabled ? theme.disabled : "",
     error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "",
-    leftIcon ? "pl-10" : "",
-    rightIcon ? "pr-10" : "",
     fullWidth ? "w-full" : "",
     className,
   ]
@@ -80,9 +78,9 @@ export const Input: React.FC<InputProps> = ({
         </label>
       )}
 
-      <div className="relative">
+      <div className="flex items-center gap-2 ">
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="flex items-center">
             <span className="text-gray-400">{leftIcon}</span>
           </div>
         )}
@@ -90,7 +88,7 @@ export const Input: React.FC<InputProps> = ({
         <input className={inputClasses} disabled={disabled} {...props} />
 
         {rightIcon && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <div className="flex items-center">
             <span className="text-gray-400">{rightIcon}</span>
           </div>
         )}

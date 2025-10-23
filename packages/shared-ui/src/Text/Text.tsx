@@ -60,7 +60,7 @@ const defaultTheme = {
   warning: "text-yellow-600",
   error: "text-red-600",
   dark: "text-gray-900",
-  light: "text-gray-500",
+  light: "text-white",
 };
 
 const weightClasses = {

@@ -20,6 +20,7 @@ import * as db from "@monorepo/shared-utils";
 import { useAuth } from "@monorepo/shared-auth";
 import { toast } from "react-toastify";
 import { Button, Input, Select, Text } from "@monorepo/shared-ui";
+import { Store } from "lucide-react";
 
 const CheckPOS = () => {
   const navigate = useNavigate();
@@ -211,12 +212,12 @@ const CheckPOS = () => {
       // Clear only session-specific data, keep cached data
       await db.clear().then(() => {
         dispatch(clearSubscription());
-        logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
+        logout({ redirectUri: import.meta.env.VITE_API_BASE_URL_RETAIL });
       });
     } catch (error) {
       console.error("Error during logout:", error);
       // Still proceed with logout even if clearing fails
-      logout({ redirectUri: import.meta.env.VITE_API_BASE_URL });
+      logout({ redirectUri: import.meta.env.VITE_API_BASE_URL_RETAIL });
     }
   };
 
@@ -252,9 +253,9 @@ const CheckPOS = () => {
   //     : companyLocationDetails?.taxActivityCodes || []
   //   : [];
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-muted to-white p-4 flex items-center justify-center">
-      <div className="w-full max-w-7xl rounded-2xl shadow-2xl overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 bg-white/70 backdrop-blur-xl">
+    <div className="min-h-screen bg-gradient-to-br from-brand-muted to-brand-surface p-4 flex items-center justify-center">
+      <div className="w-full max-w-7xl rounded-2xl shadow-brand-xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 bg-brand-surface/70 backdrop-blur-xl">
           {/* Hero Panel */}
           <div
             className="relative p-8 md:p-10 min-h-[320px] bg-no-repeat bg-cover bg-center text-white flex flex-col justify-between"
@@ -262,12 +263,10 @@ const CheckPOS = () => {
               backgroundImage: "url('/image/pos.png')",
             }}
           >
-            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-0 bg-brand-dark/35" />
             <div className="relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
-                  <span className="text-white text-xl">✨</span>
-                </div>
+                <div className="w-12 h-12 rounded-xl bg-brand-surface/15 flex items-center justify-center"></div>
                 <div>
                   <Text variant="small" color="light" className="opacity-95">
                     Welcome {isAuthenticated ? user?.name : ""}
@@ -289,9 +288,9 @@ const CheckPOS = () => {
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center mx-auto">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/30 to-orange-400/30 blur-lg" />
-                  <div className="relative w-16 h-16 rounded-full bg-white shadow-md ring-1 ring-black/5 flex items-center justify-center">
-                    <span className="text-blue-500 text-2xl">🏪</span>
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-primary/30 to-brand-accent/30 blur-lg" />
+                  <div className="relative w-16 h-16 rounded-full bg-brand-surface shadow-brand-md ring-1 ring-brand-border flex items-center justify-center">
+                    <Store className="w-7 h-7 text-brand-primary" />
                   </div>
                 </div>
               </div>
@@ -299,16 +298,16 @@ const CheckPOS = () => {
                 variant="h2"
                 color="dark"
                 weight="bold"
-                className="mt-3 bg-gradient-to-r from-blue-500 to-orange-400 bg-clip-text text-transparent"
+                className="text-[22px] font-extrabold tracking-tight mt-3 bg-gradient-to-r from-brand-primary to-brand-accent bg-clip-text text-brand-dark"
               >
                 Select POS
               </Text>
               <Text variant="small" color="secondary" className="mt-1">
                 Pick your branch and POS to get started
               </Text>
-              <div className="mt-4 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+              <div className="mt-4 h-px bg-gradient-to-r from-transparent via-brand-border to-transparent" />
               {isOffline && (
-                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-300 rounded-lg text-left">
+                <div className="mt-3 p-3 bg-brand-warning/10 border border-brand-warning/30 rounded-lg text-left">
                   <Text variant="small" color="warning">
                     You're offline. Some features may be limited.
                   </Text>
@@ -414,9 +413,8 @@ const CheckPOS = () => {
                   }}
                   placeholder="0.00"
                   required
-                  leftIcon={<span>💰</span>}
                   rightIcon={
-                    <span className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">
+                    <span className="text-xs text-brand-dark bg-brand-muted border border-brand-border rounded px-2 py-0.5">
                       EGP
                     </span>
                   }
@@ -433,7 +431,6 @@ const CheckPOS = () => {
                   onClick={handleContinue}
                   disabled={!selectedPOSValue || !hasEnteredStartCash}
                   className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                  leftIcon={<span>➡️</span>}
                 >
                   Continue
                 </Button>
@@ -441,7 +438,6 @@ const CheckPOS = () => {
                   variant="secondary"
                   onClick={handleLogOut}
                   className="w-full"
-                  leftIcon={<span>🚪</span>}
                 >
                   Log Out
                 </Button>
