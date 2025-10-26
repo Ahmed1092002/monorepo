@@ -73,3 +73,25 @@ export type { ButtonProps } from "./Button/Button";
 // DataTable components
 export { DataTable } from "./DataTable/DataTable";
 export type { DataTableProps, DataTableColumn } from "./DataTable/DataTable";
+
+// POS-specific Modals (exported as default, re-export as named)
+export { default as CustomerSearchModal } from "./Modals/CustomerSearchModal";
+export { default as ItemSearchModal } from "./Modals/ItemSearchModal";
+export { default as ReceiptSearchModal } from "./Modals/ReceiptSearchModal";
+export { default as TaxDetailsModal } from "./Modals/TaxDetailsModal";
+export { default as QuickCustomerModal } from "./Modals/QuickCustomerModal";
+export { default as PaymentSidebar } from "./POS/PaymentSidebar";
+export { default as PrintReceiptModal } from "./Modals/PrintReceiptModal";
+export { default as HeldReceiptsModal } from "./Modals/HeldReceiptsModal";
+export { default as ReturnPickerModal } from "./Modals/ReturnPickerModal";
+export { default as CloseShiftModal } from "./Modals/CloseShiftModal";
+
+// POS Components (exported as default, re-export as named)
+export { default as BrowseItems } from "./POS/BrowseItems";
+export { default as ItemEntry } from "./POS/ItemEntry";
+export { default as ReceiptItemsList } from "./POS/ReceiptItemsList";
+export { default as OrderSummary } from "./POS/OrderSummary";
+export { default as SidebarNav } from "./POS/SidebarNav";
+export { default as HeaderBar } from "./POS/HeaderBar";
+export { default as FooterToolbar } from "./POS/FooterToolbar";
+export { default as CompactFooter } from "./POS/CompactFooter";
